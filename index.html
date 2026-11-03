@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f2f5ee">
+  <title>OpenSeat | Explore beyond your major</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172f25;
+      --muted: #68766d;
+      --paper: #f2f5ee;
+      --white: #fffefa;
+      --line: #dce3da;
+      --green: #24583d;
+      --green-dark: #143b2c;
+      --lime: #d9ef73;
+      --coral: #e8795f;
+      --blue: #a7c7d1;
+      --serif: Georgia, 'Times New Roman', serif;
+      --sans: 'Trebuchet MS', 'Lucida Sans Unicode', sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 14px; }
+    button, input, select, textarea { font: inherit; }
+    button { color: inherit; cursor: pointer; }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid #e8795f88; outline-offset: 2px; }
+    .app { display: grid; grid-template-columns: 226px minmax(0, 1fr); min-height: 100vh; max-width: 1600px; margin: auto; }
+    .sidebar { display: flex; flex-direction: column; padding: 27px 17px 20px; border-right: 1px solid var(--line); background: #edf1e9; }
+    .brand { display: flex; gap: 10px; align-items: center; padding: 0 9px; color: var(--green-dark); font-weight: 800; font-size: 17px; letter-spacing: -.3px; }
+    .brand-mark { display: grid; width: 34px; aspect-ratio: 1; place-items: center; border-radius: 50%; background: var(--lime); color: var(--green-dark); font-family: var(--serif); font-size: 20px; }
+    .brand small { display: block; color: var(--muted); font-size: 10px; font-weight: 600; letter-spacing: .3px; margin-top: 2px; }
+    .nav-label { margin: 40px 10px 12px; color: #829087; font-size: 10px; font-weight: 800; letter-spacing: 1.4px; text-transform: uppercase; }
+    .nav { display: grid; gap: 5px; }
+    .nav button { display: flex; width: 100%; align-items: center; gap: 11px; padding: 11px 12px; border: 0; border-radius: 5px; background: transparent; color: #5e6f64; text-align: left; font-weight: 700; }
+    .nav button:hover { background: #e4e9e1; color: var(--ink); }
+    .nav button.active { background: var(--green-dark); color: white; }
+    .nav-icon { display: inline-grid; width: 20px; place-items: center; font-size: 16px; }
+    .nav-count { margin-left: auto; min-width: 21px; padding: 3px 6px; border-radius: 10px; background: var(--lime); color: var(--green-dark); text-align: center; font-size: 11px; }
+    .sidebar-spacer { flex: 1; }
+    .credit-mini { margin: 28px 4px 16px; padding: 15px; border: 1px solid #d5dfcf; border-radius: 5px; background: #e6ecdf; }
+    .mini-top { display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 800; }
+    .mini-top span:last-child { color: var(--green); }
+    .progress { height: 6px; margin: 12px 0 8px; overflow: hidden; border-radius: 5px; background: #cad5ca; }
+    .progress > span { display: block; height: 100%; border-radius: inherit; background: var(--green); transition: width .25s ease; }
+    .credit-mini p { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
+    .profile { display: flex; align-items: center; gap: 10px; padding: 15px 7px 0; border-top: 1px solid var(--line); }
+    .avatar { display: grid; width: 34px; aspect-ratio: 1; place-items: center; border-radius: 50%; background: #e7aa8d; color: #493326; font-family: var(--serif); font-weight: 700; }
+    .profile-name { font-size: 12px; font-weight: 800; }
+    .profile-role { color: var(--muted); font-size: 10px; margin-top: 3px; }
+    .main { min-width: 0; padding: 0 38px 55px; }
+    .topbar { display: flex; min-height: 75px; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+    .crumb { color: var(--muted); font-size: 12px; }
+    .top-actions { display: flex; align-items: center; gap: 12px; }
+    .term-toggle { display: flex; gap: 3px; padding: 4px; border: 1px solid var(--line); border-radius: 6px; background: var(--white); }
+    .term-toggle button { padding: 7px 11px; border: 0; border-radius: 4px; background: transparent; color: var(--muted); font-size: 11px; font-weight: 800; }
+    .term-toggle button.selected { background: var(--green-dark); color: white; }
+    .avatar.small { width: 32px; font-size: 12px; }
+    .content { max-width: 1190px; margin: 0 auto; }
+    .hero { display: grid; grid-template-columns: minmax(0, 1fr) 220px; gap: 24px; align-items: end; padding: 34px 0 26px; }
+    .eyebrow { display: flex; align-items: center; gap: 8px; color: var(--green); font-size: 10px; font-weight: 900; letter-spacing: 1.4px; text-transform: uppercase; }
+    .eyebrow i { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--coral); }
+    h1 { margin: 9px 0 10px; font-family: var(--serif); font-size: clamp(32px, 3.8vw, 48px); font-weight: 500; letter-spacing: 0; line-height: 1.03; }
+    .hero p { max-width: 570px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.65; }
+    .freshman-note { padding: 14px 15px; border-radius: 5px; background: var(--lime); }
+    .freshman-note strong { display: flex; align-items: center; gap: 8px; font-size: 11px; }
+    .freshman-note strong span { font-size: 15px; }
+    .freshman-note p { margin: 7px 0 0; color: #435334; font-size: 10px; line-height: 1.5; }
+    .stat-strip { display: grid; grid-template-columns: repeat(3, 1fr); border-block: 1px solid var(--line); }
+    .stat { display: flex; min-height: 71px; align-items: center; gap: 12px; padding: 12px 18px; border-right: 1px solid var(--line); }
+    .stat:first-child { padding-left: 0; }
+    .stat:last-child { border: 0; }
+    .stat-icon { display: grid; width: 34px; aspect-ratio: 1; place-items: center; border-radius: 50%; background: #e1e9dd; color: var(--green); font-size: 16px; }
+    .stat-value { font-family: var(--serif); font-size: 22px; line-height: 1; }
+    .stat-label { margin-top: 5px; color: var(--muted); font-size: 10px; }
+    .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin: 29px 0 15px; }
+    h2 { margin: 0; font-family: var(--serif); font-size: 25px; font-weight: 500; }
+    .subheading { margin-top: 5px; color: var(--muted); font-size: 11px; }
+    .interest-row { display: flex; flex-wrap: wrap; gap: 7px; margin: 18px 0 15px; }
+    .interest { padding: 7px 11px; border: 1px solid var(--line); border-radius: 20px; background: transparent; color: #53645a; font-size: 10px; font-weight: 800; }
+    .interest:hover { border-color: var(--green); }
+    .interest.selected { border-color: var(--green-dark); background: var(--green-dark); color: white; }
+    .toolbar { display: flex; align-items: center; gap: 8px; margin: 15px 0 13px; }
+    .search { flex: 1; min-width: 140px; }
+    .search input, .toolbar select { width: 100%; height: 38px; padding: 0 12px; border: 1px solid var(--line); border-radius: 4px; background: var(--white); color: var(--ink); font-size: 11px; }
+    .toolbar select { width: auto; min-width: 148px; }
+    .result-count { flex: 0 0 auto; color: var(--muted); font-size: 10px; }
+    .course-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .course { position: relative; overflow: hidden; padding: 0; border: 1px solid var(--line); border-radius: 5px; background: var(--white); transition: transform .18s ease, box-shadow .18s ease; animation: rise .35s both; }
+    .course:hover { transform: translateY(-2px); box-shadow: 0 8px 20px #173a2910; }
+    .course-art { position: relative; display: flex; height: 92px; align-items: flex-start; justify-content: space-between; overflow: hidden; padding: 12px 14px; }
+    .course-art::before, .course-art::after { position: absolute; content: ''; pointer-events: none; }
+    .course-art::before { width: 124px; height: 124px; right: 15%; top: -77px; border: 1px solid #173a2922; border-radius: 50%; box-shadow: 0 0 0 14px #173a2909, 0 0 0 29px #173a2908; }
+    .course-art::after { width: 85px; height: 85px; right: 10%; bottom: -59px; border: 1px solid #173a2922; transform: rotate(45deg); }
+    .art-leaf { background: #d9e8bc; }
+    .art-coral { background: #f0c3ad; }
+    .art-blue { background: #c4dbe0; }
+    .art-lime { background: #e9eb9e; }
+    .art-lavender { background: #d6d4c7; }
+    .art-peach { background: #edcf9f; }
+    .school-pill, .recommend-pill { position: relative; z-index: 1; padding: 5px 8px; border: 1px solid #173a2920; border-radius: 3px; background: #ffffff9e; color: var(--ink); font-size: 9px; font-weight: 800; }
+    .recommend-pill { border: 0; background: var(--green-dark); color: white; }
+    .course-body { padding: 13px 14px 14px; }
+    .course-meta { display: flex; align-items: center; gap: 7px; margin-bottom: 7px; color: var(--green); font-size: 9px; font-weight: 900; letter-spacing: .7px; text-transform: uppercase; }
+    .course-meta .dot { width: 3px; height: 3px; border-radius: 50%; background: #98a49a; }
+    .course h3 { margin: 0; font-family: var(--serif); font-size: 19px; font-weight: 500; line-height: 1.18; }
+    .course-desc { min-height: 33px; margin: 6px 0 12px; color: var(--muted); font-size: 10px; line-height: 1.55; }
+    .details { display: flex; flex-wrap: wrap; gap: 6px 11px; padding: 10px 0; border-top: 1px solid #e8ece6; color: #516158; font-size: 9px; }
+    .details span { display: inline-flex; align-items: center; gap: 4px; }
+    .course-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 10px; border-top: 1px solid #e8ece6; }
+    .seats { color: var(--muted); font-size: 9px; }
+    .seats b { color: var(--ink); }
+    .seats.low b { color: #b34d36; }
+    .button { display: inline-flex; min-height: 34px; align-items: center; justify-content: center; gap: 6px; padding: 0 12px; border: 1px solid var(--green-dark); border-radius: 4px; background: var(--green-dark); color: white; font-size: 10px; font-weight: 800; transition: background .15s ease; }
+    .button:hover { background: #2b6746; }
+    .button:disabled { cursor: default; opacity: .48; }
+    .button.secondary { border-color: var(--line); background: transparent; color: var(--ink); }
+    .button.secondary:hover { border-color: var(--green); background: #edf2eb; }
+    .button.submitted { border-color: #b7c8b7; background: #e7eee5; color: var(--green); }
+    .empty { grid-column: 1 / -1; padding: 40px 20px; border: 1px dashed #c4d0c3; border-radius: 5px; color: var(--muted); text-align: center; }
+    .empty strong { display: block; margin-bottom: 7px; color: var(--ink); font-family: var(--serif); font-size: 20px; font-weight: 500; }
+    .visits-header { display: flex; align-items: end; justify-content: space-between; gap: 12px; margin: 31px 0 17px; }
+    .visits-list { display: grid; gap: 12px; }
+    .visit { display: grid; grid-template-columns: 1fr 1.05fr; gap: 22px; padding: 18px; border: 1px solid var(--line); border-radius: 5px; background: var(--white); animation: rise .3s both; }
+    .visit-info { display: flex; flex-direction: column; }
+    .visit-info h3 { margin: 9px 0 5px; font-family: var(--serif); font-size: 21px; font-weight: 500; }
+    .visit-info p { margin: 0 0 10px; color: var(--muted); font-size: 10px; line-height: 1.55; }
+    .visit-controls { display: grid; align-content: start; gap: 9px; }
+    .field-label { display: flex; align-items: center; justify-content: space-between; color: #4b5e52; font-size: 9px; font-weight: 900; letter-spacing: .7px; text-transform: uppercase; }
+    .field-label small { color: var(--muted); font-size: 9px; font-weight: 500; letter-spacing: 0; text-transform: none; }
+    textarea { width: 100%; min-height: 68px; resize: vertical; padding: 9px 10px; border: 1px solid var(--line); border-radius: 4px; background: #fcfdf9; color: var(--ink); font-size: 10px; line-height: 1.5; }
+    .visit-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; }
+    .signature-status { margin-right: auto; color: var(--muted); font-size: 9px; }
+    .signature-status.done { color: var(--green); font-weight: 800; }
+    .credit-banner { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-top: 18px; padding: 18px 20px; border-radius: 5px; background: var(--green-dark); color: white; }
+    .credit-banner h3 { margin: 0; font-family: var(--serif); font-size: 21px; font-weight: 500; }
+    .credit-banner p { margin: 5px 0 0; color: #d0ded3; font-size: 10px; line-height: 1.5; }
+    .credit-total { min-width: 93px; padding: 10px 14px; border: 1px solid #ffffff3b; border-radius: 4px; text-align: center; }
+    .credit-total strong { display: block; color: var(--lime); font-family: var(--serif); font-size: 24px; font-weight: 500; }
+    .credit-total span { color: #d0ded3; font-size: 9px; }
+    .toast { position: fixed; right: 22px; bottom: 20px; z-index: 5; max-width: min(360px, calc(100vw - 32px)); padding: 12px 16px; border-radius: 4px; background: var(--green-dark); box-shadow: 0 8px 22px #143b2c33; color: white; font-size: 11px; opacity: 0; transform: translateY(8px); pointer-events: none; transition: .2s ease; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    dialog { width: min(490px, calc(100vw - 28px)); padding: 0; border: 1px solid var(--line); border-radius: 6px; background: var(--white); color: var(--ink); box-shadow: 0 24px 80px #143b2c30; }
+    dialog::backdrop { background: #10251c88; backdrop-filter: blur(2px); }
+    .dialog-head { display: flex; align-items: start; justify-content: space-between; gap: 16px; padding: 20px 22px 15px; border-bottom: 1px solid var(--line); }
+    .dialog-head h2 { font-size: 24px; }
+    .dialog-head p { margin: 5px 0 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
+    .close-dialog { width: 30px; height: 30px; border: 1px solid var(--line); border-radius: 4px; background: transparent; font-size: 16px; }
+    .dialog-body { display: grid; gap: 15px; padding: 17px 22px 20px; }
+    .dialog-body label { display: grid; gap: 6px; color: #4b5e52; font-size: 9px; font-weight: 900; letter-spacing: .7px; text-transform: uppercase; }
+    .dialog-body select, .dialog-body input[type="number"] { height: 38px; padding: 0 10px; border: 1px solid var(--line); border-radius: 4px; background: #fcfdf9; color: var(--ink); font-size: 11px; }
+    .day-options { display: flex; flex-wrap: wrap; gap: 6px; }
+    .day-options label { display: flex; align-items: center; gap: 6px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 4px; background: #fcfdf9; color: var(--ink); font-size: 10px; font-weight: 700; letter-spacing: 0; text-transform: none; }
+    .day-options input { accent-color: var(--green); }
+    .dialog-hint { color: var(--muted); font-size: 10px; }
+    .dialog-actions { display: flex; justify-content: end; gap: 8px; padding-top: 5px; }
+    .signature-method { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 9px; }
+    .signature-method select { height: 30px; padding: 0 7px; border: 1px solid var(--line); border-radius: 3px; background: white; color: var(--ink); font-size: 9px; }
+    .footer-note { margin: 21px 0 0; color: #879289; font-size: 9px; text-align: center; }
+    @keyframes rise { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 900px) {
+      .app { grid-template-columns: 190px minmax(0, 1fr); }
+      .main { padding-inline: 24px; }
+      .course-grid { grid-template-columns: 1fr; }
+      .course-art { height: 78px; }
+    }
+    @media (max-width: 650px) {
+      .app { display: block; padding-bottom: 63px; }
+      .sidebar { position: fixed; z-index: 4; right: 0; bottom: 0; left: 0; display: block; height: 60px; padding: 5px 10px env(safe-area-inset-bottom); border-top: 1px solid var(--line); border-right: 0; background: #f8faf5; }
+      .brand, .nav-label, .sidebar-spacer, .credit-mini, .profile { display: none; }
+      .nav { height: 100%; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+      .nav button { justify-content: center; gap: 8px; padding: 7px; font-size: 11px; }
+      .nav-icon { font-size: 15px; }
+      .main { padding: 0 16px 30px; }
+      .topbar { min-height: 62px; }
+      .crumb { font-size: 10px; }
+      .top-actions { gap: 7px; }
+      .term-toggle { gap: 1px; }
+      .term-toggle button { padding: 7px 8px; font-size: 9px; }
+      .avatar.small { width: 28px; }
+      .hero { grid-template-columns: 1fr; gap: 15px; padding: 27px 0 20px; }
+      h1 { max-width: 430px; font-size: 37px; }
+      .hero p { font-size: 12px; }
+      .freshman-note { display: flex; align-items: center; gap: 12px; padding: 10px 12px; }
+      .freshman-note p { margin: 0; }
+      .stat { min-height: 66px; gap: 7px; padding: 8px; }
+      .stat:first-child { padding-left: 0; }
+      .stat-icon { width: 28px; font-size: 13px; }
+      .stat-value { font-size: 19px; }
+      .stat-label { font-size: 9px; }
+      .section-heading { margin-top: 24px; }
+      .toolbar { flex-wrap: wrap; }
+      .toolbar select { flex: 1; min-width: 120px; }
+      .result-count { width: 100%; }
+      .course-grid { grid-template-columns: 1fr; }
+      .visit { grid-template-columns: 1fr; gap: 14px; padding: 14px; }
+      .visits-header { align-items: start; flex-direction: column; }
+      .credit-banner { align-items: start; padding: 15px; }
+      .credit-banner h3 { font-size: 18px; }
+      .credit-total { min-width: 76px; padding: 8px; }
+      .signature-status { flex-basis: 100%; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" aria-label="Main navigation">
+      <div class="brand"><div class="brand-mark">o</div><div>OpenSeat<small>LEARN SIDEWAYS</small></div></div>
+      <div class="nav-label">Your campus</div>
+      <nav class="nav">
+        <button id="discoverNav" class="active" type="button"><span class="nav-icon" aria-hidden="true">⌕</span>Discover</button>
+        <button id="visitsNav" type="button"><span class="nav-icon" aria-hidden="true">▤</span>My visits <span class="nav-count" id="visitCount">0</span></button>
+      </nav>
+      <div class="sidebar-spacer"></div>
+      <section class="credit-mini" aria-label="Extra credit progress">
+        <div class="mini-top"><span>WH1010 EXTRA CREDIT</span><span id="miniPoints">0 / 5</span></div>
+        <div class="progress"><span id="miniProgress" style="width:0%"></span></div>
+        <p>One point per completed visit. Each must be a different department.</p>
+      </section>
+      <div class="profile"><div class="avatar">AC</div><div><div class="profile-name">Ari Chen</div><div class="profile-role">First-year · Class of 2029</div></div></div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="crumb">Student dashboard <span aria-hidden="true">/</span> <b id="crumbPage">Discover</b></div>
+        <div class="top-actions">
+          <div class="term-toggle" role="group" aria-label="Choose semester">
+            <button type="button" data-term="Spring 2026" class="selected">Spring '26</button>
+            <button type="button" data-term="Fall 2026">Fall '26</button>
+          </div>
+          <div class="avatar small" aria-label="Ari Chen">AC</div>
+        </div>
+      </div>
+      <div class="content">
+        <section id="discoverView">
+          <header class="hero">
+            <div>
+              <div class="eyebrow"><i></i> Make room for a different point of view</div>
+              <h1>Your next favorite<br>subject might be next door.</h1>
+              <p>Drop into a class outside your usual orbit. Explore concentrations and minors across campus, meet a new way of thinking, and take one good idea back with you.</p>
+            </div>
+            <aside class="freshman-note"><strong><span aria-hidden="true">✳</span> First-year head start</strong><p>Freshmen get priority access to open seats before general sign-up.</p></aside>
+          </header>
+          <div class="stat-strip" aria-label="Your activity">
+            <div class="stat"><div class="stat-icon" aria-hidden="true">↗</div><div><div class="stat-value" id="statSchools">3</div><div class="stat-label">schools to explore</div></div></div>
+            <div class="stat"><div class="stat-icon" aria-hidden="true">◎</div><div><div class="stat-value" id="statVisits">0</div><div class="stat-label">classes on your list</div></div></div>
+            <div class="stat"><div class="stat-icon" aria-hidden="true">✳</div><div><div class="stat-value" id="statPoints">0 / 5</div><div class="stat-label">WH1010 points earned</div></div></div>
+          </div>
+          <div class="section-heading">
+            <div><h2>Find a class that feels like you</h2><div class="subheading">A few good places to start, based on what you’re curious about.</div></div>
+            <button class="button secondary" id="hostSetup" type="button">⚙ Host setup</button>
+          </div>
+          <div class="interest-row" id="interestRow" aria-label="Filter by interest"></div>
+          <div class="toolbar">
+            <label class="search"><input id="searchInput" type="search" placeholder="Search a class, school, or department" aria-label="Search classes"></label>
+            <select id="departmentFilter" aria-label="Filter by department"><option value="all">All departments</option></select>
+            <div class="result-count" id="resultCount" aria-live="polite"></div>
+          </div>
+          <div class="course-grid" id="courseGrid"></div>
+          <p class="footer-note">Sample classes and schedules for demonstration. Confirm details with the host department.</p>
+        </section>
+
+        <section id="visitsView" hidden>
+          <div class="visits-header">
+            <div><div class="eyebrow"><i></i> Your learning, in your words</div><h1 style="font-size:38px;margin-top:8px">My visits</h1><div class="subheading">Capture one takeaway, get your professor’s signature, then send it to Canvas.</div></div>
+            <button class="button secondary" id="backToDiscover" type="button">＋ Find another class</button>
+          </div>
+          <div class="visits-list" id="visitsList"></div>
+          <div class="credit-banner">
+            <div><h3>WH1010 extra credit</h3><p>Earn 1 point per completed class, up to 5. Each visit must be from a different department.<br>Complete a visit with a takeaway, professor signature, and Canvas submission.</p></div>
+            <div class="credit-total"><strong id="creditPoints">0 / 5</strong><span>points earned</span></div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <dialog id="hostDialog" aria-labelledby="hostDialogTitle">
+    <form id="hostForm">
+      <div class="dialog-head"><div><h2 id="hostDialogTitle">Class availability</h2><p>Set the days and visit capacity students can book for your class.</p></div><button class="close-dialog" id="closeHostDialog" type="button" aria-label="Close">×</button></div>
+      <div class="dialog-body">
+        <label for="hostClass">Class</label>
+        <select id="hostClass" aria-label="Class"></select>
+        <div><div class="field-label" style="margin-bottom:7px">Available days</div><div class="day-options" id="dayOptions"></div></div>
+        <label for="hostCapacity">Student visit capacity</label>
+        <input id="hostCapacity" type="number" min="1" max="100" value="6" required>
+        <div class="dialog-hint" id="hostCapacityHint">Seat cap includes all student visits.</div>
+        <div class="dialog-actions"><button class="button secondary" id="cancelHostSetup" type="button">Cancel</button><button class="button" type="submit">Save availability</button></div>
+      </div>
+    </form>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>
+    const courses = [
+      { id: 'anth-214', code: 'ANTH 214', title: 'Food, Culture & Power', department: 'Anthropology', school: 'School of Social Inquiry', term: 'Spring 2026', days: 'Tue + Thu', time: '10:30 AM', seats: 4, capacity: 8, interest: 'People & culture', description: 'Trace how what we eat tells stories about identity, memory, and who holds power.', art: 'art-leaf', recommended: true },
+      { id: 'design-110', code: 'DES 110', title: 'Designing Everyday Things', department: 'Design', school: 'School of Art & Design', term: 'Spring 2026', days: 'Mon + Wed', time: '1:00 PM', seats: 2, capacity: 6, interest: 'Making & design', description: 'Notice the small design decisions that shape how we move through the world.', art: 'art-coral', recommended: true },
+      { id: 'env-230', code: 'ENVS 230', title: 'The Living City', department: 'Environmental Studies', school: 'School of Earth & Environment', term: 'Spring 2026', days: 'Wed + Fri', time: '9:00 AM', seats: 5, capacity: 7, interest: 'Planet & place', description: 'Explore how urban nature, climate, and public space are connected.', art: 'art-blue', recommended: false },
+      { id: 'music-155', code: 'MUS 155', title: 'Sound & the Moving Image', department: 'Music', school: 'School of Arts & Letters', term: 'Spring 2026', days: 'Tue + Thu', time: '2:30 PM', seats: 3, capacity: 5, interest: 'Sound & stories', description: 'Listen closely to the way music changes what we see on screen.', art: 'art-lime', recommended: true },
+      { id: 'psych-101', code: 'PSYC 101', title: 'How We Make Decisions', department: 'Psychology', school: 'School of Social Inquiry', term: 'Fall 2026', days: 'Mon + Wed', time: '11:00 AM', seats: 5, capacity: 9, interest: 'People & culture', description: 'A practical tour of the shortcuts, biases, and feelings behind our choices.', art: 'art-lavender', recommended: true },
+      { id: 'bio-180', code: 'BIOL 180', title: 'Field Notes: Urban Ecology', department: 'Biology', school: 'School of Life Sciences', term: 'Fall 2026', days: 'Tue + Fri', time: '8:30 AM', seats: 3, capacity: 6, interest: 'Planet & place', description: 'Get outside and study the surprisingly wild systems all around campus.', art: 'art-leaf', recommended: false },
+      { id: 'film-202', code: 'FILM 202', title: 'Stories in the Frame', department: 'Film Studies', school: 'School of Arts & Letters', term: 'Fall 2026', days: 'Tue + Thu', time: '3:00 PM', seats: 4, capacity: 8, interest: 'Sound & stories', description: 'Break down the craft of a scene, from its first image to its last cut.', art: 'art-peach', recommended: true },
+      { id: 'econ-120', code: 'ECON 120', title: 'Markets & Moral Choices', department: 'Economics', school: 'School of Civic Life', term: 'Fall 2026', days: 'Mon + Wed', time: '9:30 AM', seats: 1, capacity: 6, interest: 'Systems & society', description: 'Ask what markets are good at, what they miss, and who gets to decide.', art: 'art-coral', recommended: false }
+    ];
+    const interests = ['All interests', 'People & culture', 'Making & design', 'Planet & place', 'Sound & stories', 'Systems & society'];
+    let semester = 'Spring 2026';
+    let selectedInterest = 'All interests';
+    let visits = [];
+    const byId = id => courses.find(course => course.id === id);
+    const toast = message => {
+      const node = document.getElementById('toast');
+      node.textContent = message;
+      node.classList.add('show');
+      clearTimeout(toast.timer);
+      toast.timer = setTimeout(() => node.classList.remove('show'), 2600);
+    };
+    const points = () => Math.min(5, new Set(visits.filter(v => v.submitted).map(v => byId(v.courseId).department)).size);
+    function updateCounts() {
+      const count = visits.length;
+      document.getElementById('visitCount').textContent = count;
+      document.getElementById('statVisits').textContent = count;
+      document.getElementById('statPoints').textContent = `${points()} / 5`;
+      document.getElementById('miniPoints').textContent = `${points()} / 5`;
+      document.getElementById('miniProgress').style.width = `${points() * 20}%`;
+      document.getElementById('creditPoints').textContent = `${points()} / 5`;
+    }
+    function buildInterests() {
+      const row = document.getElementById('interestRow');
+      row.innerHTML = interests.map(item => `<button type="button" class="interest ${item === selectedInterest ? 'selected' : ''}" data-interest="${item}">${item}</button>`).join('');
+      row.querySelectorAll('button').forEach(button => button.addEventListener('click', () => {
+        selectedInterest = button.dataset.interest;
+        buildInterests();
+        renderCourses();
+      }));
+    }
+    function buildDepartments() {
+      const select = document.getElementById('departmentFilter');
+      const current = select.value;
+      const departments = [...new Set(courses.filter(c => c.term === semester).map(c => c.department))].sort();
+      select.innerHTML = '<option value="all">All departments</option>' + departments.map(d => `<option value="${d}">${d}</option>`).join('');
+      if (departments.includes(current)) select.value = current;
+    }
+    function renderCourses() {
+      buildDepartments();
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      const department = document.getElementById('departmentFilter').value;
+      const enrolled = new Set(visits.map(v => v.courseId));
+      const visible = courses.filter(c => c.term === semester && (selectedInterest === 'All interests' || c.interest === selectedInterest) && (department === 'all' || c.department === department) && (!query || `${c.code} ${c.title} ${c.department} ${c.school}`.toLowerCase().includes(query)));
+      document.getElementById('resultCount').textContent = `${visible.length} ${visible.length === 1 ? 'class' : 'classes'} · ${semester}`;
+      const grid = document.getElementById('courseGrid');
+      if (!visible.length) {
+        grid.innerHTML = '<div class="empty"><strong>No classes found just yet.</strong>Try another interest or search term.</div>';
+        return;
+      }
+      grid.innerHTML = visible.map((c, index) => {
+        const joined = enrolled.has(c.id);
+        const full = c.seats <= 0;
+        const low = c.seats <= 2;
+        return `<article class="course" style="animation-delay:${index * 45}ms">
+          <div class="course-art ${c.art}"><span class="school-pill">${c.school}</span>${c.recommended ? '<span class="recommend-pill">FOR YOU</span>' : ''}</div>
+          <div class="course-body"><div class="course-meta">${c.code}<i class="dot"></i>${c.department}</div>
+          <h3>${c.title}</h3><p class="course-desc">${c.description}</p>
+          <div class="details"><span>◷ ${c.days}</span><span>◌ ${c.time}</span><span>✳ ${c.interest}</span></div>
+          <div class="course-footer"><span class="seats ${low ? 'low' : ''}"><b>${full ? 'Waitlist' : `${c.seats} ${c.seats === 1 ? 'seat' : 'seats'}`}</b> of ${c.capacity} open</span>
+          <button class="button ${joined ? 'submitted' : ''}" type="button" data-enroll="${c.id}" ${joined || full ? 'disabled' : ''}>${joined ? '✓ On your list' : full ? 'Class full' : '＋ Save a seat'}</button></div></div></article>`;
+      }).join('');
+      grid.querySelectorAll('[data-enroll]').forEach(button => button.addEventListener('click', () => enroll(button.dataset.enroll)));
+    }
+    function enroll(id) {
+      const course = byId(id);
+      if (!course || course.seats <= 0 || visits.some(v => v.courseId === id)) return;
+      course.seats--;
+      visits.push({ courseId: id, takeaway: '', signed: false, submitted: false });
+      updateCounts();
+      renderCourses();
+      toast(`Seat saved for ${course.code}. Added to My visits.`);
+    }
+    function showView(name) {
+      const isDiscover = name === 'discover';
+      document.getElementById('discoverView').hidden = !isDiscover;
+      document.getElementById('visitsView').hidden = isDiscover;
+      document.getElementById('discoverNav').classList.toggle('active', isDiscover);
+      document.getElementById('visitsNav').classList.toggle('active', !isDiscover);
+      document.getElementById('crumbPage').textContent = isDiscover ? 'Discover' : 'My visits';
+      if (!isDiscover) renderVisits();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function renderVisits() {
+      const list = document.getElementById('visitsList');
+      if (!visits.length) {
+        list.innerHTML = '<div class="empty"><strong>Your visit list is waiting.</strong>Find a class that catches your attention and save a seat.</div>';
+        updateCounts();
+        return;
+      }
+      list.innerHTML = visits.map((visit, index) => {
+        const c = byId(visit.courseId);
+        const duplicateDept = visits.some(v => v.courseId !== visit.courseId && byId(v.courseId).department === c.department && v.submitted);
+        const canSubmit = visit.takeaway.trim().length > 0 && visit.signed && !visit.submitted && !duplicateDept && points() < 5;
+        return `<article class="visit" style="animation-delay:${index * 45}ms">
+          <div class="visit-info"><div class="course-meta">${c.code}<i class="dot"></i>${c.department}</div><h3>${c.title}</h3><p>${c.school} · ${c.term}<br>${c.days} at ${c.time}</p><div class="details"><span>◷ ${c.days}</span><span>◌ ${c.time}</span></div></div>
+          <div class="visit-controls"><label class="field-label" for="takeaway-${c.id}">One takeaway <small>${visit.takeaway.trim().length ? 'Saved' : 'Required for Canvas'}</small></label>
+            <textarea id="takeaway-${c.id}" data-takeaway="${c.id}" placeholder="What surprised you? What idea will you carry with you?" ${visit.submitted ? 'disabled' : ''}>${escapeText(visit.takeaway)}</textarea>
+            <div class="visit-actions"><span class="signature-status ${visit.signed ? 'done' : ''}">${visit.signed ? `✓ ${escapeText(visit.signatureMethod || 'Digital')} professor signature received` : 'Awaiting professor signature'}</span>
+              <label class="signature-method">Type <select data-sign-method="${c.id}" ${visit.signed || visit.submitted ? 'disabled' : ''}><option ${visit.signatureMethod !== 'Virtual' ? 'selected' : ''}>Digital</option><option ${visit.signatureMethod === 'Virtual' ? 'selected' : ''}>Virtual</option></select></label>
+              <button class="button secondary" type="button" data-sign="${c.id}" ${visit.signed || visit.submitted ? 'disabled' : ''}>${visit.signed ? 'Signed' : '✍ Record signature'}</button>
+              <button class="button ${visit.submitted ? 'submitted' : ''}" type="button" data-submit="${c.id}" ${visit.submitted || !canSubmit ? 'disabled' : ''}>${visit.submitted ? '✓ Sent to Canvas' : 'Submit to Canvas'}</button>
+            </div>
+            ${duplicateDept && !visit.submitted ? '<div class="subheading">Extra credit is limited to one submitted visit per department.</div>' : ''}
+            ${points() >= 5 && !visit.submitted ? '<div class="subheading">You have reached the 5-point WH1010 maximum.</div>' : ''}
+          </div></article>`;
+      }).join('');
+      list.querySelectorAll('[data-takeaway]').forEach(input => input.addEventListener('input', () => {
+        const visit = visits.find(v => v.courseId === input.dataset.takeaway);
+        if (visit) visit.takeaway = input.value;
+        renderVisitSubmitButtons();
+      }));
+      list.querySelectorAll('[data-sign]').forEach(button => button.addEventListener('click', () => {
+        const visit = visits.find(v => v.courseId === button.dataset.sign);
+        if (!visit || visit.signed) return;
+        visit.signed = true;
+        renderVisits();
+        toast(`${visit.signatureMethod || 'Digital'} professor signature added to your visit.`);
+      }));
+      list.querySelectorAll('[data-sign-method]').forEach(select => select.addEventListener('change', () => {
+        const visit = visits.find(v => v.courseId === select.dataset.signMethod);
+        if (visit) visit.signatureMethod = select.value;
+      }));
+      list.querySelectorAll('[data-submit]').forEach(button => button.addEventListener('click', () => {
+        const visit = visits.find(v => v.courseId === button.dataset.submit);
+        const course = byId(button.dataset.submit);
+        if (!visit || !course || !visit.takeaway.trim() || !visit.signed || points() >= 5 || visits.some(v => v !== visit && v.submitted && byId(v.courseId).department === course.department)) return;
+        visit.submitted = true;
+        updateCounts();
+        renderVisits();
+        toast(`Visit submitted to Canvas. ${points()} WH1010 ${points() === 1 ? 'point' : 'points'} earned.`);
+      }));
+      updateCounts();
+    }
+    function renderVisitSubmitButtons() {
+      visits.forEach(visit => {
+        const button = document.querySelector(`[data-submit="${visit.courseId}"]`);
+        if (!button || visit.submitted) return;
+        const course = byId(visit.courseId);
+        const duplicate = visits.some(v => v !== visit && v.submitted && byId(v.courseId).department === course.department);
+        button.disabled = !visit.takeaway.trim() || !visit.signed || duplicate || points() >= 5;
+      });
+    }
+    function escapeText(text) {
+      return text.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
+    }
+    function refreshHostOptions() {
+      const select = document.getElementById('hostClass');
+      const available = courses.filter(c => c.term === semester);
+      select.innerHTML = available.map(c => `<option value="${c.id}">${c.code} — ${c.title}</option>`).join('');
+      updateHostFields();
+    }
+    function updateHostFields() {
+      const course = byId(document.getElementById('hostClass').value);
+      if (!course) return;
+      const selectedDays = course.days.split(' + ');
+      document.getElementById('dayOptions').innerHTML = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map(day => `<label><input type="checkbox" name="hostDay" value="${day}" ${selectedDays.includes(day) ? 'checked' : ''}>${day}</label>`).join('');
+      const capacity = document.getElementById('hostCapacity');
+      const reserved = course.capacity - course.seats;
+      capacity.min = Math.max(1, reserved);
+      capacity.value = course.capacity;
+      document.getElementById('hostCapacityHint').textContent = `${reserved} ${reserved === 1 ? 'seat is' : 'seats are'} already reserved; capacity cannot be set below this number.`;
+    }
+    document.querySelectorAll('[data-term]').forEach(button => button.addEventListener('click', () => {
+      semester = button.dataset.term;
+      document.querySelectorAll('[data-term]').forEach(item => item.classList.toggle('selected', item === button));
+      renderCourses();
+    }));
+    document.getElementById('searchInput').addEventListener('input', renderCourses);
+    document.getElementById('departmentFilter').addEventListener('change', renderCourses);
+    document.getElementById('discoverNav').addEventListener('click', () => showView('discover'));
+    document.getElementById('visitsNav').addEventListener('click', () => showView('visits'));
+    document.getElementById('backToDiscover').addEventListener('click', () => showView('discover'));
+    document.getElementById('hostSetup').addEventListener('click', () => {
+      refreshHostOptions();
+      document.getElementById('hostDialog').showModal();
+    });
+    document.getElementById('hostClass').addEventListener('change', updateHostFields);
+    document.getElementById('closeHostDialog').addEventListener('click', () => document.getElementById('hostDialog').close());
+    document.getElementById('cancelHostSetup').addEventListener('click', () => document.getElementById('hostDialog').close());
+    document.getElementById('hostForm').addEventListener('submit', event => {
+      event.preventDefault();
+      const course = byId(document.getElementById('hostClass').value);
+      const selectedDays = [...document.querySelectorAll('input[name="hostDay"]:checked')].map(input => input.value);
+      const capacity = Number(document.getElementById('hostCapacity').value);
+      const reserved = course.capacity - course.seats;
+      if (!selectedDays.length) {
+        toast('Choose at least one day for class visits.');
+        return;
+      }
+      if (!Number.isInteger(capacity) || capacity < reserved || capacity > 100) {
+        toast(`Capacity must be between ${reserved} and 100 students.`);
+        return;
+      }
+      course.days = selectedDays.join(' + ');
+      course.capacity = capacity;
+      course.seats = capacity - reserved;
+      document.getElementById('hostDialog').close();
+      renderCourses();
+      toast(`${course.code} availability updated.`);
+    });
+    buildInterests();
+    renderCourses();
+    updateCounts();
+  </script>
+</body>
+</html>
